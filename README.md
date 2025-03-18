@@ -1,6 +1,6 @@
 # To-Do List
 
-- [ ] It must be possible to create a user
+- [x] It must be possible to create a user
 - [ ] It must be possible to identify the user between requests
 - [ ] It must be possible to log a meal, with the following information:
   - [ ] Meals must be related to a user.
