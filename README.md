@@ -8,7 +8,7 @@
   - [x] Description
   - [x] Date and Time
   - [x] Whether it is within the diet or not
-- [ ] It must be possible to list all meals of a user
+- [x] It must be possible to list all meals of a user
 - [ ] It must be possible to view a single meal
 - [ ] It must be possible to edit a meal, allowing changes to all the above data
 - [ ] It must be possible to delete a meal
