@@ -4,6 +4,8 @@ import { checkSessionIdExists } from '../middlewares/check-session-id-exists';
 import { randomUUID } from 'node:crypto';
 import { knex } from '../database';
 
+const paramsSchema = z.object({ mealId: z.string().uuid() });
+
 const mealSchema = z.object({
   name: z.string(),
   description: z.string(),
@@ -28,6 +30,10 @@ async function getMealByUser(userId) {
     .orderBy('updated_at', 'desc');
 }
 
+async function getMealById(mealId, userId) {
+  return await knex('meals').where({ id: mealId, user_id: userId }).first();
+}
+
 export async function mealsRoutes(app: FastifyInstance) {
   app.addHook('preHandler', checkSessionIdExists);
 
@@ -45,8 +51,19 @@ export async function mealsRoutes(app: FastifyInstance) {
   app.get('/', async (request, reply) => {
     const userId = request.user?.id;
     const meals = await getMealByUser(userId);
-    console.log(userId);
-    console.log(meals);
+
     return reply.status(201).send(meals);
+  });
+
+  app.get('/:mealId', async (request, reply) => {
+    const { mealId } = paramsSchema.parse(request.params);
+    const userId = request.user?.id;
+    const meal = await getMealById(mealId, userId);
+
+    if (!meal) {
+      return reply.status(404).send({ error: 'Meal not found' });
+    }
+
+    return reply.send({ meal });
   });
 }
