@@ -47,6 +47,48 @@ async function deleteMeal(mealId, userId) {
   await knex('meals').where({ id: mealId, user_id: userId }).delete();
 }
 
+async function getMealMetrics(userId) {
+  const totalMealsOnDiet = await knex('meals')
+    .where({ user_id: userId, is_on_diet: true })
+    .count('id', { as: 'total' })
+    .first();
+
+  const totalMealsOffDiet = await knex('meals')
+    .where({ user_id: userId, is_on_diet: false })
+    .count('id', { as: 'total' })
+    .first();
+
+  const totalMeals = await knex('meals')
+    .where({ user_id: userId })
+    .count('id', { as: 'total' })
+    .first();
+
+  const meals = await knex('meals')
+    .where({ user_id: userId })
+    .orderBy('create_at', 'asc');
+
+  let bestOnDietSequence = 0;
+  let currentSequence = 0;
+
+  for (const meal of meals) {
+    if (meal.is_on_diet) {
+      currentSequence++;
+      if (currentSequence > bestOnDietSequence) {
+        bestOnDietSequence = currentSequence;
+      }
+    } else {
+      currentSequence = 0;
+    }
+  }
+
+  return {
+    totalMealsOnDiet: totalMealsOnDiet?.total,
+    totalMealsOffDiet: totalMealsOffDiet?.total,
+    totalMeals: totalMeals?.total,
+    bestOnDietSequence,
+  };
+}
+
 export async function mealsRoutes(app: FastifyInstance) {
   app.addHook('preHandler', checkSessionIdExists);
 
@@ -105,5 +147,11 @@ export async function mealsRoutes(app: FastifyInstance) {
 
     await deleteMeal(mealId, userId);
     return reply.status(204).send();
+  });
+
+  app.get('/metrics', async (request, reply) => {
+    const userId = request.user?.id;
+    const metrics = await getMealMetrics(userId);
+    return reply.status(201).send(metrics);
   });
 }
