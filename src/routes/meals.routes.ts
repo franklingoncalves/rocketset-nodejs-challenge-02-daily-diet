@@ -22,6 +22,12 @@ async function insertMeal(mealData, userId) {
   });
 }
 
+async function getMealByUser(userId) {
+  return await knex('meals')
+    .where({ user_id: userId })
+    .orderBy('updated_at', 'desc');
+}
+
 export async function mealsRoutes(app: FastifyInstance) {
   app.addHook('preHandler', checkSessionIdExists);
 
@@ -34,5 +40,13 @@ export async function mealsRoutes(app: FastifyInstance) {
     } catch (error) {
       return reply.status(400).send({ error: error.message });
     }
+  });
+
+  app.get('/', async (request, reply) => {
+    const userId = request.user?.id;
+    const meals = await getMealByUser(userId);
+    console.log(userId);
+    console.log(meals);
+    return reply.status(201).send(meals);
   });
 }
