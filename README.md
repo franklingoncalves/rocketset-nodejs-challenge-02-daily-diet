@@ -2,12 +2,12 @@
 
 - [x] It must be possible to create a user
 - [x] It must be possible to identify the user between requests
-- [ ] It must be possible to log a meal, with the following information:
-  - [ ] Meals must be related to a user.
-  - [ ] Name
-  - [ ] Description
-  - [ ] Date and Time
-  - [ ] Whether it is within the diet or not
+- [x] It must be possible to log a meal, with the following information:
+  - [x] Meals must be related to a user.
+  - [x] Name
+  - [x] Description
+  - [x] Date and Time
+  - [x] Whether it is within the diet or not
 - [ ] It must be possible to list all meals of a user
 - [ ] It must be possible to view a single meal
 - [ ] It must be possible to edit a meal, allowing changes to all the above data
