@@ -43,6 +43,10 @@ async function updateMeal(mealId, mealData, userId) {
   });
 }
 
+async function deleteMeal(mealId, userId) {
+  await knex('meals').where({ id: mealId, user_id: userId }).delete();
+}
+
 export async function mealsRoutes(app: FastifyInstance) {
   app.addHook('preHandler', checkSessionIdExists);
 
@@ -87,6 +91,19 @@ export async function mealsRoutes(app: FastifyInstance) {
     }
 
     await updateMeal(mealId, mealData, userId);
+    return reply.status(204).send();
+  });
+
+  app.delete('/:mealId', async (request, reply) => {
+    const { mealId } = paramsSchema.parse(request.params);
+    const userId = request.user?.id;
+    const meal = await getMealById(mealId, userId);
+
+    if (!meal) {
+      return reply.status(404).send({ error: 'Meal not found' });
+    }
+
+    await deleteMeal(mealId, userId);
     return reply.status(204).send();
   });
 }
