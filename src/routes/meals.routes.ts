@@ -34,6 +34,15 @@ async function getMealById(mealId, userId) {
   return await knex('meals').where({ id: mealId, user_id: userId }).first();
 }
 
+async function updateMeal(mealId, mealData, userId) {
+  await knex('meals').where({ id: mealId, user_id: userId }).update({
+    name: mealData.name,
+    description: mealData.description,
+    is_on_diet: mealData.isOnDiet,
+    updated_at: new Date(),
+  });
+}
+
 export async function mealsRoutes(app: FastifyInstance) {
   app.addHook('preHandler', checkSessionIdExists);
 
@@ -65,5 +74,19 @@ export async function mealsRoutes(app: FastifyInstance) {
     }
 
     return reply.send({ meal });
+  });
+
+  app.put('/:mealId', async (request, reply) => {
+    const { mealId } = paramsSchema.parse(request.params);
+    const mealData = mealSchema.parse(request.body);
+    const userId = request.user?.id;
+    const meal = await getMealById(mealId, userId);
+
+    if (!meal) {
+      return reply.status(404).send({ error: 'Meal not found' });
+    }
+
+    await updateMeal(mealId, mealData, userId);
+    return reply.status(204).send();
   });
 }
