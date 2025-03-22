@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx --watch .\\src\\server.ts",
     "test": "vitest --run",
-    "knex": "node --import tsx ./node_modules/knex/bin/cli.js"
+    "knex": "node --import tsx ./node_modules/knex/bin/cli.js",
+    "build": "tsup src --out-dir build"
   },
   "keywords": [],
   "author": "",
