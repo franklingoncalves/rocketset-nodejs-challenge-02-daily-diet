@@ -107,7 +107,7 @@ export async function mealsRoutes(app: FastifyInstance) {
     const userId = request.user?.id;
     const meals = await getMealByUser(userId);
 
-    return reply.status(201).send(meals);
+    return reply.status(200).send(meals);
   });
 
   app.get('/:mealId', async (request, reply) => {
@@ -152,6 +152,6 @@ export async function mealsRoutes(app: FastifyInstance) {
   app.get('/metrics', async (request, reply) => {
     const userId = request.user?.id;
     const metrics = await getMealMetrics(userId);
-    return reply.status(201).send(metrics);
+    return reply.status(200).send(metrics);
   });
 }
